@@ -1,6 +1,6 @@
 % This code is designed to loop the alzheimers analysis sewuence (that
 % produces CWTs)
-
+%Hannah Branch
 
 close all
 clear all

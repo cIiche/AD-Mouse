@@ -2,6 +2,7 @@ clear all
 close all
 clc
 % % %% load data
+% Hannah Branch
 
 filePath = '/Volumes/GoogleDrive/Shared drives/UW Seattle lab/AD2/Hybrid Protocol Experiments/05 12 Eguchi Experiment/'
 fileName = 'TRIAL10_500mV.mat';

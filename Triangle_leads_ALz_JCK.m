@@ -4,19 +4,20 @@ clc
 % % %% load data
 %
 
-filePath = 'C:\Users\Administrator\MATLAB\Projects\ACTUALadgit\Data\Bobola\5-5-21 MATLAB data\'
-fileName = 'trial1_200mV';
+filePath = 'C:\Users\Administrator\MATLAB\Projects\ACTUALadgit\Data\Bobola\5-5-21 Mouse1 RECUT only channels with data\'
+fileName = 'Trial 1';
 
 load([filePath,fileName]);
 
 % % % load 03_med_V1_US_40Hz_100_35_AD.mat
 %% set parameters
 %set_channels=input('Enter channels for analysis [S1 A1 V1R V1L Stim Gel ]:');% Gel is 9th item, stim is 6 for us. others are 1-4
-set_channels=[1 2 3 4 6];
-%plot_cwt=input('Plot CWTs? Y=1 N=2 :');
+set_channels=[1 2 3 4 5];
+% plot_cwt=input('Plot CWTs? Y=1 N=2 :');
 plot_cwt=1;
 S1=set_channels(1);A1=set_channels(2);V1R=set_channels(3);V1L=set_channels(4);stim=set_channels(5);% set channel identities
-fs=tickrate; % tickrate is what fs in Hz is called in the data file (aka you could hard code this as fs=10000  
+fs = input('What is the tickrate/sampling rate?:') ;
+% fs=tickrate; % tickrate is what fs in Hz is called in the data file (aka you could hard code this as fs=10000  
  %acquisition rate (Hz)
 timeax=1:dataend(1); %set time axis
 time=timeax/fs/60;%frames to seconds to minutes (these are the time values for each data point)

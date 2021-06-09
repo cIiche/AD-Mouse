@@ -3,8 +3,8 @@ close all
 clc
 % % %% load data
 
-filePath = '/Volumes/GoogleDrive/Shared drives/UW Seattle lab/AD2/Hybrid Protocol Experiments/05 12 Eguchi Experiment/'
-fileName = 'TRIAL10_500mV.mat';
+filePath = 'C:\Users\aliss\Documents\MATLAB\AD project\AD data\'
+fileName = 'trial1_200mV.mat';
 
 load([filePath,fileName]);
 

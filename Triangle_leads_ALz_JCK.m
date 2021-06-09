@@ -3,7 +3,7 @@ close all
 clc
 % % %% load data
 
-filePath = 'C:\Users\aliss\Documents\MATLAB\AD project\AD data\'
+filePath = 'C:\Users\aliss\Documents\MATLAB\AD project\AD data\5.5.21\'
 fileName = 'trial1_200mV.mat';
 
 load([filePath,fileName]);
@@ -11,10 +11,10 @@ load([filePath,fileName]);
 % % % load 03_med_V1_US_40Hz_100_35_AD.mat
 %% set parameters
 %set_channels=input('Enter channels for analysis [S1 A1 V1R V1L Stim Gel ]:');% Gel is 9th item, stim is 6 for us. others are 1-4
-set_channels=[1 2 3 4 6 9];
+set_channels=[1 2 3 4 6];
 %plot_cwt=input('Plot CWTs? Y=1 N=2 :');
 plot_cwt=1;
-S1=set_channels(1);A1=set_channels(2);V1R=set_channels(3);V1L=set_channels(4);stim=set_channels(5); gel=set_channels(6);% set channel identities
+S1=set_channels(1);A1=set_channels(2);V1R=set_channels(3);V1L=set_channels(4);stim=set_channels(5);% set channel identities
 fs=tickrate; % tickrate is what fs in Hz is called in the data file (aka you could hard code this as fs=10000  
  %acquisition rate (Hz)
 timeax=1:dataend(1); %set time axis
@@ -27,7 +27,7 @@ alldata.S1data=data(datastart(S1):dataend(S1)); % Call different fields as Struc
 alldata.A1data=data(datastart(A1):dataend(A1));
 alldata.V1Rdata=data(datastart(V1R):dataend(V1R));
 alldata.V1Ldata=data(datastart(V1L):dataend(V1L));
-alldata.geldata=data(datastart(gel):dataend(gel));
+%alldata.geldata=data(datastart(gel):dataend(gel));
 alldata.stimdata=data(datastart(stim):dataend(stim));
 
 % make bipolar channels
@@ -37,7 +37,7 @@ alldata.A1V1Lbipolardata=alldata.A1data-alldata.V1Ldata; % Make a bipolar channe
 alldata.S1V1Rbipolardata=alldata.S1data-alldata.V1Rdata;
 alldata.S1A1bipolardata=alldata.S1data-alldata.A1data;
 alldata.A1V1Rbipolardata=alldata.A1data-alldata.V1Rdata;
-names={'V1bipolardata','A1V1Lbipolardata','A1V1Rbipolardata','stimdata','geldata'};
+names={'V1bipolardata','A1V1Lbipolardata','A1V1Rbipolardata','stimdata'};
 %names={'V1bipolardata','S1V1Lbipolardata','S1V1Rbipolardata','S1A1bipolardata','A1V1Lbipolardata','A1V1Rbipolardata','stimdata'}; %stimdata is just the 40hz input signal.  It is a positive control for what pure 40hz looks like, and negative control for brain activity
 
 %% plot raw data
@@ -78,9 +78,12 @@ index_allstim=[];%secondary array of stimuli for identifying first pulse of a tr
 X=alldata.stimdata;
 X=X-min(X);
 X=X/max(X);
-Y=X>0.5;
+%Y=X>0.5;
+Y=X>0.04;
 Z=diff(Y);
-index_allstim=find(Z>0.5);index_allstim=index_allstim+1;
+%index_allstim=find(Z>0.5);index_allstim=index_allstim+1;
+index_allstim=find(Z>0.04);index_allstim=index_allstim+1;
+
 
 %find first pulse of each train, if stimulation contains trains
 index_trains=diff(index_allstim)>20000;

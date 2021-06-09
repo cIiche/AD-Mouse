@@ -90,8 +90,8 @@ index_allstim=[];%secondary array of stimuli for identifying first pulse of a tr
 X=alldata.stimdata;
 X=X-min(X);
 X=X/max(X);
-%Y=X>0.5;
-Y=X>0.04;
+Y=X>0.5;
+%Y=X>0.04;used during debugging, works as well
 Z=diff(Y);
 %index_allstim=find(Z>0.5);index_allstim=index_allstim+1;
 index_allstim=find(Z>0.04);index_allstim=index_allstim+1;

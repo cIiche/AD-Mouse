@@ -3,7 +3,7 @@ close all
 clc
 % % %% load data
 
-filePath = '/Volumes/GoogleDrive/Shared drives/UW Seattle lab/AD2/Hybrid Protocol Experiments/05 12 Eguchi Experiment/'
+filePath = ''
 fileName = 'TRIAL10_500mV.mat';
 
 load([filePath,fileName]);

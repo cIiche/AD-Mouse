@@ -1,4 +1,4 @@
-%% Authors: Alissa, Henry 
+%% Authors: Alissa Phutirat, Henry Tan 
 
 % This script plots CWTs (IN PROGRESS) 
 % working off the working cwt command and old code to produce a script that creates scalograms from labchart channels per trial 
@@ -6,58 +6,81 @@
 clear all
 close all
 clc
-%% load data
+% % %% load data
 
-% runs successfully 
-filePath = 'C:\Users\Administrator\MATLAB\Projects\ACTUALadgit\Data\Bobola\5-5-21 Mouse1 RECUT only channels with data\'
-fileName = 'Trial 3';
+% runs successfully (BOBOLA) 
+filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-5-21 Mouse1 RECUT only channels with data\'
+fileName = 'Trial 1';
+% works: Trials 1,2,3 does not work: 4 
 
-% %trial 1 works only due to code interpreting noise as stim data thus CWT protuces, stim data is incorrect,
-% % trial 2 does not error exceed array (0), a=a median stas
-% filePath = 'C:\Users\Administrator\MATLAB\Projects\ACTUALadgit\Data\Bobola\5-5-21 MATLAB data\'
-% fileName ='trial2_250mV' ;
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-5-21 MATLAB data\'
+% fileName ='trial3_250mV' ;
+%Works: trial 1,4 Does not work: 2
 
+% runs successfully (EGUCHI)
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\5-18-21 MATLAB data\'
+% fileName ='trail2_250mV' ;
+%Works: trial 1,4 Does not work: 2
+
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\5-20 RECUT\'
+% fileName ='Trial 7' ;
+%Works: 
+
+% load([filePath,fileName]);
 load([filePath,fileName]);
-
+% % % load 03_med_V1_US_40Hz_100_35_AD.mat
 %% set parameters
-%set_channels=input('Enter channels for analysis [S1 A1 V1R V1L Stim Gel ]:');
+%set_channels=input('Enter channels for analysis [S1 A1 V1R V1L Stim Gel ]:');% Gel is 9th item, stim is 6 for us. others are 1-4
+% set_channels=[1 2 3 4 5]; % works for recut 
 set_channels=[1 2 3 4 5] ;
+% plot_cwt=input('Plot CWTs? Y=1 N=2 : ');
+plot_cwt=1;
 
 % set channel identities
-S1=set_channels(1);
-A1=set_channels(2);
-V1R=set_channels(3);
-V1L=set_channels(4);
-stim=set_channels(5);
+decision = input('Do you want to manually input channels?(1 = yes, 0 = no):') ;
+if decision == 1
+    RS = input('What channel is right somato?:') ;
+    LS = input('What channel is left somato?:') ;
+    RH = input('What channel is right hippo?:') ;
+    LH = input('What channel is left hippo?:'); 
+    RS=set_channels(RS);LS=set_channels(LS);RH=set_channels(RH);LH=set_channels(LH);stim=set_channels(5) ; 
+end 
+if decision == 0  
+    RS=set_channels(1);LS=set_channels(2);RH=set_channels(3);LH=set_channels(4);stim=set_channels(5) ; 
+end 
+% stim should always be on index 5, no matter what channel 
 
+% S1=set_channels(1);A1=set_channels(2);V1R=set_channels(3);V1L=set_channels(4);stim=set_channels(5);
 % fs = input('What is the tickrate/sampling rate?:') ;
-% Bobola Protocol sampling rate = 10k
-% Eguchi Protocal sampling rate = 60k
+% fs=tickrate; % tickrate is what fs in Hz is called in the data file (aka you could hard code this as fs=10000  
+ %acquisition rate (Hz)
+ 
+%Bobola Protocol sampling rate = 10k
+%Eguchi Protocal sampling rate = 20k
 fs=10000 ;
-%fs = 60000 ;
+% fs = 20000 ;
+
+% timeax=1:dataend(1); %set time axis
+
 timeax=1:dataend(1); %set time axis
 time=timeax/fs/60;%frames to seconds to minutes (these are the time values for each data point)
 timesec=timeax./fs;
 tottime=length(timeax)./fs./60; % total experiment block length in minutes 
 %% Organize data into structure array
 alldata=[]; %initialize structure array (alldata is a struct)
-alldata.S1data=data(datastart(S1):dataend(S1)); % Call different fields as StructName.fieldName-> Struct is alldata and field is S1dataR
-alldata.A1data=data(datastart(A1):dataend(A1));
-alldata.V1Rdata=data(datastart(V1R):dataend(V1R));
-alldata.V1Ldata=data(datastart(V1L):dataend(V1L));
-%alldata.geldata=data(datastart(gel):dataend(gel));
+
+alldata.RSdata=data(datastart(RS):dataend(RS)); % Call different fields as StructName.fieldName-> Struct is alldata and field is S1dataR
+alldata.LSdata=data(datastart(LS):dataend(LS));
+alldata.RHdata=data(datastart(RH):dataend(RH));
+alldata.LHdata=data(datastart(LH):dataend(LH));
 alldata.stimdata=data(datastart(stim):dataend(stim));
 
-% make bipolar channels
-alldata.V1bipolardata=alldata.V1Rdata-alldata.V1Ldata; % make V1 bipolar by subtracting right from left to get rid of common noise
-alldata.S1V1Lbipolardata=alldata.S1data-alldata.V1Ldata; % make a bipolar channel between S1 and A1 
-alldata.A1V1Lbipolardata=alldata.A1data-alldata.V1Ldata; % Make a bipolar channel between S1 and V1
-alldata.S1V1Rbipolardata=alldata.S1data-alldata.V1Rdata;
-alldata.S1A1bipolardata=alldata.S1data-alldata.A1data;
-alldata.A1V1Rbipolardata=alldata.A1data-alldata.V1Rdata;
-names={'V1bipolardata','A1V1Lbipolardata','A1V1Rbipolardata','stimdata'};
-%names={'V1bipolardata','S1V1Lbipolardata','S1V1Rbipolardata','S1A1bipolardata','A1V1Lbipolardata','A1V1Rbipolardata','stimdata'}; %stimdata is just the 40hz input signal.  It is a positive control for what pure 40hz looks like, and negative control for brain activity
 
+% % make bipolar channels
+alldata.LHRSbipolardata=alldata.LHdata-alldata.RSdata;
+alldata.LHRHbipolardata=alldata.LHdata-alldata.RHdata;
+
+names={'RSdata','LSdata','RHdata','LHdata', 'stimdata', 'LHRSbipolardata', 'LHRHbipolardata'};
 %% plot raw data
 figure
 for i=1:length(names)
@@ -99,9 +122,11 @@ X=X/max(X);
 Y=X>0.5;
 %Y=X>0.04;used during debugging, works as well
 Z=diff(Y);
-%index_allstim=find(Z>0.5);index_allstim=index_allstim+1;
-index_allstim=find(Z>0.04);index_allstim=index_allstim+1;
-
+% index_allstim=find(Z>0.5);
+% index_allstim=index_allstim+1;
+index_allstim=find(Z>0.04);
+index_allstim=index_allstim+1;
+% abs(Z>
 
 %find first pulse of each train, if stimulation contains trains
 index_trains=diff(index_allstim)>20000;
@@ -113,8 +138,6 @@ index_stim=index_allstim(index_trains);
 for i=1:length(names) %initiate data array to hold STAs
 stas.(char(names(i)))=[];
 end
-
-
 
 tb=1; %time before stim to start STA
 ta=9; %time after stim to end STA
@@ -146,29 +169,33 @@ xlabel('time after stimulus onset (s)')
 ticks=[0:.005:.1];
 clear yticks
 clear yticklabels
+if plot_cwt==1 
 
 %     for i=1%:length(names)    
-for i=1:length(names)  
-    figure
-    caxis_track=[];
-    %ylabels={'V1bipolar (Hz)';'S1A (Hz)';'S1V1(Hz)'; '40hzStim (Hz)'};
-    xlabel('time after stimulus onset (s)');
-    mediansig=median(stas.(char(names(i))));
-    [minfreq,maxfreq] = cwtfreqbounds(length(mediansig),fs); %determine the bandpass bounds for the signal
-    cwt(mediansig,[],fs);
-    %ylabel(ylabels(i))
-    colormap(jet)
-    title(names(i))
-    ylim([.001, .1])
-    yticks(ticks)
-    yticklabels({  0    5.0000   10.0000   15.0000   20.0000   25.0000   30.0000   35.0000   40.0000   45.0000   50.0000  55.0000  60})
-    set(gca,'FontSize',20)
-    caxis([.00008, .0002]);
+    for i=1:length(names)  
+        figure
+        caxis_track=[];
+        %ylabels={'V1bipolar (Hz)';'S1A (Hz)';'S1V1(Hz)'; '40hzStim (Hz)'};
+        xlabel('time after stimulus onset (s)');
+        mediansig=median(stas.(char(names(i))));
+        [minfreq,maxfreq] = cwtfreqbounds(length(mediansig),fs); %determine the bandpass bounds for the signal
+        cwt(mediansig,[],fs);
+        %ylabel(ylabels(i))
+        colormap(jet)
+        title(names(i))
+        ylim([.001, .1])
+        yticks(ticks)
+        yticklabels({  0    5.0000   10.0000   15.0000   20.0000   25.0000   30.0000   35.0000   40.0000   45.0000   50.0000  55.0000  60})
+        set(gca,'FontSize',20)
+        caxis([.00008, .0002]);
         
-%     pngFileName = sprintf('plot_%d.fig', i);
-%     fullFileName = fullfile(folder, pngFileName);
+%         pngFileName = sprintf('plot_%d.fig', i);
+	%fullFileName = fullfile(folder, pngFileName);
 		
 	% Then save it
-%     export_fig(fullFileName);
-% 	  saveas(gcf, pngFileName)
+	%export_fig(fullFileName);
+% 	   saveas(gcf, pngFileName)
+	
+
+    end
 end

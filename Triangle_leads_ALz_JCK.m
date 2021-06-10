@@ -3,20 +3,36 @@ close all
 clc
 % % %% load data
 
-filePath = '/Volumes/GoogleDrive/Shared drives/UW Seattle lab/AD2/Hybrid Protocol Experiments/05 12 Eguchi Experiment/'
-fileName = 'TRIAL10_500mV.mat';
+% runs successfully 
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\ACTUALadgit\Data\Bobola\5-5-21 Mouse1 RECUT only channels with data\'
+% fileName = 'Trial 1';
+% 
+% %trial 1 works only due to code interpreting noise as stim data thus CWT protuces, stim data is incorrect,
+% % trial 2 does not error exceed array (0), a=a median stas
+filePath = 'C:\Users\Administrator\MATLAB\Projects\ACTUALadgit\Data\Bobola\5-5-21 MATLAB data\'
+fileName ='trial4_300mV' ;
 
 load([filePath,fileName]);
 
 % % % load 03_med_V1_US_40Hz_100_35_AD.mat
 %% set parameters
 %set_channels=input('Enter channels for analysis [S1 A1 V1R V1L Stim Gel ]:');% Gel is 9th item, stim is 6 for us. others are 1-4
-set_channels=[1 2 3 4 6 9];
-%plot_cwt=input('Plot CWTs? Y=1 N=2 :');
+% set_channels=[1 2 3 4 5]; % works for recut 
+set_channels=[1 2 3 4 5 6 7 8 9] ;
+% plot_cwt=input('Plot CWTs? Y=1 N=2 :');
 plot_cwt=1;
-S1=set_channels(1);A1=set_channels(2);V1R=set_channels(3);V1L=set_channels(4);stim=set_channels(5); gel=set_channels(6);% set channel identities
-fs=tickrate; % tickrate is what fs in Hz is called in the data file (aka you could hard code this as fs=10000  
+S1=set_channels(1);
+A1=set_channels(2);
+V1R=set_channels(3);
+V1L=set_channels(4);
+stim=set_channels(5); % set channel identities
+% fs = input('What is the tickrate/sampling rate?:') ;
+% fs=tickrate; % tickrate is what fs in Hz is called in the data file (aka you could hard code this as fs=10000  
  %acquisition rate (Hz)
+%Bobola Protocol sampling rate = 10k
+%Eguchi Protocal sampling rate = 60k
+fs=10000 ;
+%fs = 60000 ;
 timeax=1:dataend(1); %set time axis
 time=timeax/fs/60;%frames to seconds to minutes (these are the time values for each data point)
 timesec=timeax./fs;
@@ -27,7 +43,7 @@ alldata.S1data=data(datastart(S1):dataend(S1)); % Call different fields as Struc
 alldata.A1data=data(datastart(A1):dataend(A1));
 alldata.V1Rdata=data(datastart(V1R):dataend(V1R));
 alldata.V1Ldata=data(datastart(V1L):dataend(V1L));
-alldata.geldata=data(datastart(gel):dataend(gel));
+%alldata.geldata=data(datastart(gel):dataend(gel));
 alldata.stimdata=data(datastart(stim):dataend(stim));
 
 % make bipolar channels
@@ -37,7 +53,7 @@ alldata.A1V1Lbipolardata=alldata.A1data-alldata.V1Ldata; % Make a bipolar channe
 alldata.S1V1Rbipolardata=alldata.S1data-alldata.V1Rdata;
 alldata.S1A1bipolardata=alldata.S1data-alldata.A1data;
 alldata.A1V1Rbipolardata=alldata.A1data-alldata.V1Rdata;
-names={'V1bipolardata','A1V1Lbipolardata','A1V1Rbipolardata','stimdata','geldata'};
+names={'V1bipolardata','A1V1Lbipolardata','A1V1Rbipolardata','stimdata'};
 %names={'V1bipolardata','S1V1Lbipolardata','S1V1Rbipolardata','S1A1bipolardata','A1V1Lbipolardata','A1V1Rbipolardata','stimdata'}; %stimdata is just the 40hz input signal.  It is a positive control for what pure 40hz looks like, and negative control for brain activity
 
 %% plot raw data
@@ -79,8 +95,11 @@ X=alldata.stimdata;
 X=X-min(X);
 X=X/max(X);
 Y=X>0.5;
+%Y=X>0.04;used during debugging, works as well
 Z=diff(Y);
-index_allstim=find(Z>0.5);index_allstim=index_allstim+1;
+%index_allstim=find(Z>0.5);index_allstim=index_allstim+1;
+index_allstim=find(Z>0.04);index_allstim=index_allstim+1;
+
 
 %find first pulse of each train, if stimulation contains trains
 index_trains=diff(index_allstim)>20000;
@@ -127,7 +146,8 @@ clear yticks
 clear yticklabels
 if plot_cwt==1 
 
-    for i=1%:length(names)       
+%     for i=1%:length(names)    
+    for i=1:length(names)  
         figure
         caxis_track=[];
         %ylabels={'V1bipolar (Hz)';'S1A (Hz)';'S1V1(Hz)'; '40hzStim (Hz)'};

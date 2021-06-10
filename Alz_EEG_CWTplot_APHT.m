@@ -3,94 +3,172 @@
 % This script plots CWTs (IN PROGRESS) 
 % working off the working cwt command and old code to produce a script that creates scalograms from labchart channels per trial 
 
-clc 
 clear all
+close all
+clc
+%% load data
 
-% folder= 'C:\Users\Charl\MATLAB\Mourad Lab\Mouse_EEG\Data\06-30-2020 Mouse Experiment 1\'; 
-folder= 'C:\Users\Charl\MATLAB\Mourad Lab\Mouse_EEG\Data\12-23 Mouse Experiment\'; 
+% runs successfully 
+filePath = 'C:\Users\Administrator\MATLAB\Projects\ACTUALadgit\Data\Bobola\5-5-21 Mouse1 RECUT only channels with data\'
+fileName = 'Trial 3';
 
-%Change what is in the string depending on which file/files you want to run
-file_list=dir([folder 'TRIAL*.mat']);
-baseline=dir([folder 'Baseline.mat']); % or baseline 1 or baseline 2 depending on trials 
+% %trial 1 works only due to code interpreting noise as stim data thus CWT protuces, stim data is incorrect,
+% % trial 2 does not error exceed array (0), a=a median stas
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\ACTUALadgit\Data\Bobola\5-5-21 MATLAB data\'
+% fileName ='trial2_250mV' ;
 
-% this doesnt work  
-% if folder = 'C:\Users\Charl\MATLAB\Mourad Lab\Mouse_EEG\Data\12-16 Mouse Experiment\'; 
-%     set_channels=[1 2 3 4 9]; % for 12/16 data?
-% else: 
-%     set_channels=[1 2 3 4 7]; % updated so you do not have to change last number 
-% end 
+load([filePath,fileName]);
 
-set_channels=[1 2 3 4 9]; % updated so you do not have to change last number (we added code for searching for light). Change ddepending on channel in surgery notes (9?)
-ch_names={'V1L','S1L','S1R', 'V1R', 'Ultrasound'}; %setting up the names that will be assigned in the matrix and the order
-% trial_names={' FIRST LIGHT ONLY' 'LIGHT + US' ' SECOND LIGHT ONLY'};
+%% set parameters
+%set_channels=input('Enter channels for analysis [S1 A1 V1R V1L Stim Gel ]:');
+set_channels=[1 2 3 4 5] ;
 
-%this names the channels based on where they were placed, make sure they match lab chart
-V1L=set_channels(3);
-S1L=set_channels(4);
-S1R=set_channels(2);
-V1R=set_channels(1);
-lightstim=set_channels(5);
-%this is important since its how the other code will find the channels.
-%Everythin is coded by name so it is not hard coded in 
-%';' prevents the line outcome from appearing in the terminal everytime, it just looks bad and is useless 
-%create data arrays
+% set channel identities
+S1=set_channels(1);
+A1=set_channels(2);
+V1R=set_channels(3);
+V1L=set_channels(4);
+stim=set_channels(5);
 
-% [wt, f] = cwt(x (input signal), 'wname'(name of wavelet used), fs(sampling frequency))
-% OR 
-% [wt, period] = cwt(x, 'wname', ts(sampling period)] 
+% fs = input('What is the tickrate/sampling rate?:') ;
+% Bobola Protocol sampling rate = 10k
+% Eguchi Protocal sampling rate = 60k
+fs=10000 ;
+%fs = 60000 ;
+timeax=1:dataend(1); %set time axis
+time=timeax/fs/60;%frames to seconds to minutes (these are the time values for each data point)
+timesec=timeax./fs;
+tottime=length(timeax)./fs./60; % total experiment block length in minutes 
+%% Organize data into structure array
+alldata=[]; %initialize structure array (alldata is a struct)
+alldata.S1data=data(datastart(S1):dataend(S1)); % Call different fields as StructName.fieldName-> Struct is alldata and field is S1dataR
+alldata.A1data=data(datastart(A1):dataend(A1));
+alldata.V1Rdata=data(datastart(V1R):dataend(V1R));
+alldata.V1Ldata=data(datastart(V1L):dataend(V1L));
+%alldata.geldata=data(datastart(gel):dataend(gel));
+alldata.stimdata=data(datastart(stim):dataend(stim));
 
-% wt = cwt(x)
-% wt = cwt(x,wname)
-% [wt,f] = cwt(___,fs)
-% [wt,period] = cwt(___,ts)
-% [wt,f,coi] = cwt(___,fs)
-% [wt,period,coi] = cwt(___,ts)
-% [___] = cwt(___,Name,Value)
-% [___,coi,fb] = cwt(___)
-% [___,fb,scalingcfs] = cwt(___)
-% cwt(___)
+% make bipolar channels
+alldata.V1bipolardata=alldata.V1Rdata-alldata.V1Ldata; % make V1 bipolar by subtracting right from left to get rid of common noise
+alldata.S1V1Lbipolardata=alldata.S1data-alldata.V1Ldata; % make a bipolar channel between S1 and A1 
+alldata.A1V1Lbipolardata=alldata.A1data-alldata.V1Ldata; % Make a bipolar channel between S1 and V1
+alldata.S1V1Rbipolardata=alldata.S1data-alldata.V1Rdata;
+alldata.S1A1bipolardata=alldata.S1data-alldata.A1data;
+alldata.A1V1Rbipolardata=alldata.A1data-alldata.V1Rdata;
+names={'V1bipolardata','A1V1Lbipolardata','A1V1Rbipolardata','stimdata'};
+%names={'V1bipolardata','S1V1Lbipolardata','S1V1Rbipolardata','S1A1bipolardata','A1V1Lbipolardata','A1V1Rbipolardata','stimdata'}; %stimdata is just the 40hz input signal.  It is a positive control for what pure 40hz looks like, and negative control for brain activity
 
-%%
+%% plot raw data
+figure
+for i=1:length(names)
+    subplot(length(names),1,i)
+    plot(time,alldata.(char(names(i)))) % this is plotting time in minutes, but if you want seconds, use timesec instead of time
+    title(names(i));
+end
+xlabel('time (minutes)')
 
-% fs = input('What is the sampling rate?') ; % samples per second
-fs = 44100.0 ; 
-tclip = 10e-3 ; % 10mS duration of signal 
-nos = fs*tclip ; % No. of smaples in 10mS 
-tpoints = linspace(0,10e-3,nos) ; 
-x = cos(2*pi*500*tpoints); %cos(2*pi*f*t) signal 
-x(87:89) = 0; 
-x(307:309) = 0; 
-plot(tpoints,x) ; 
-title('Signal') ;  
-% plot figure 1 (signal) 
-figure(1)
-plot(tpoints,x) 
+% %%  Check frequency components of raw data 
+% signal=(alldata.V1bipolardata);
+% fftV1=fft(signal);
+% figure
+% plot(linspace(0,fs,length(fftV1)),abs(fftV1));
+% xlim([0 100]);
+% ylim([0 6]);
+%% Filter the raw data with a lowpass butterworth filter 
+%Note: it's better to filter the raw data before STAs because this limits
+%the end effects that are inevitably created by the filter (you'd get end
+%effects at the ends of each STA, vs end effects only at the beginning and
+%end of the time series data
 
-% getting scalogram (method 1: with COI) - COI: cone of influence: shows
-% areas in scalogram that are potentially affected by edge-effect artifact 
-figure(2) 
-cwt(x, 'amor', seconds(1/fs)); %'morse'(default), 'amor', bump'
-colormap(pink) 
-title('Scalogram with COI by Method 1') ;
+lowEnd = 1; % Hz
+highEnd = 50; % Hz
+filterOrder = 3; % Filter order (e.g., 2 for a second-order Butterworth filter). Try other values too
+[b, a] = butter(filterOrder, [lowEnd highEnd]/(fs/2)); % Generate filter coefficients
 
-% getting scalogram (Method2: without COI) 
-[cfs, perd] = cwt(x, 'amor', seconds(1/fs)) ;  %'morse'(default), 'amor', bump'; cfs = coefficient matrix as image
-cfs = abs(cfs) ; 
-figure(3) 
-per = seconds(perd) ; 
-pcolor(tpoints, per, cfs) % pseudocolor image 
-set(gca, 'yscale','log');
-shading interp 
-title('Scalogram by method2') ;
+for ii=1:length(names)
+filteredData.(char(names(ii))) = filtfilt(b, a,alldata.(char(names(ii)))); % Apply filter to data using zero-phase filtering
+end
 
-% scalogram with COI and pseudocolor image 
-figure(4) 
-cwt(x, 'amor', seconds(1/fs)); %'morse'(default), 'amor', bump'
-colormap(parula) 
-title('Scalogram with COI by Method 1') ;
+%% detect stimuli
+index_stim=[];%initialize reference array of stimulus onsets for STAs
+index_allstim=[];%secondary array of stimuli for identifying first pulse of a train. 
 
-% Converting scalogram as RGB color image 
-% scgimg = ind2rgb(im2uint8(rescale (flip(cfs))), jet(320)) ;
-% imwrite(imresize(scgimg,[512,512]), 'scalogram.jpg') 
-%   
-%%
+X=alldata.stimdata;
+X=X-min(X);
+X=X/max(X);
+Y=X>0.5;
+%Y=X>0.04;used during debugging, works as well
+Z=diff(Y);
+%index_allstim=find(Z>0.5);index_allstim=index_allstim+1;
+index_allstim=find(Z>0.04);index_allstim=index_allstim+1;
+
+
+%find first pulse of each train, if stimulation contains trains
+index_trains=diff(index_allstim)>20000;
+index_allstim(1)=[];
+index_stim=index_allstim(index_trains);
+
+
+%% Create STAs
+for i=1:length(names) %initiate data array to hold STAs
+stas.(char(names(i)))=[];
+end
+
+
+
+tb=1; %time before stim to start STA
+ta=9; %time after stim to end STA
+
+for i=1:length(names)
+    for j=2:(length(index_stim)-1) %cycle through stimuli
+        stas.(char(names(i)))=[stas.(char(names(i))); filteredData.(char(names(i)))((index_stim(j)-fs*tb):(index_stim(j)+fs*ta))];
+    end
+end
+
+%% plot filtered STAS
+figure
+x2=1:length(stas.(char(names(1)))); % make an x axis
+x2=x2/fs-1; % convert x axis from samples to time 
+for i=1:(length(names)-1)
+    subplot(length(names)-1,1,i)
+    a=median(stas.(char(names(i))));
+    a=a-median(stas.(char(names(i)))(1:fs));
+    a=a/100*1000;
+    asmooth=smoothdata(a); % smooth the data 
+    plot(x2,asmooth,'linewidth',1.5)
+    ylim([-0.01 0.01])
+    ylabel(names(i))
+end
+subplot(4,1,4)
+xlabel('time after stimulus onset (s)')
+
+%% plot filtered CWTs of STAs
+ticks=[0:.005:.1];
+clear yticks
+clear yticklabels
+
+%     for i=1%:length(names)    
+for i=1:length(names)  
+    figure
+    caxis_track=[];
+    %ylabels={'V1bipolar (Hz)';'S1A (Hz)';'S1V1(Hz)'; '40hzStim (Hz)'};
+    xlabel('time after stimulus onset (s)');
+    mediansig=median(stas.(char(names(i))));
+    [minfreq,maxfreq] = cwtfreqbounds(length(mediansig),fs); %determine the bandpass bounds for the signal
+    cwt(mediansig,[],fs);
+    %ylabel(ylabels(i))
+    colormap(jet)
+    title(names(i))
+    ylim([.001, .1])
+    yticks(ticks)
+    yticklabels({  0    5.0000   10.0000   15.0000   20.0000   25.0000   30.0000   35.0000   40.0000   45.0000   50.0000  55.0000  60})
+    set(gca,'FontSize',20)
+    caxis([.00008, .0002]);
+        
+%     pngFileName = sprintf('plot_%d.fig', i);
+%     fullFileName = fullfile(folder, pngFileName);
+		
+	% Then save it
+%     export_fig(fullFileName);
+% 	  saveas(gcf, pngFileName)
+end

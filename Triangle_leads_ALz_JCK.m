@@ -15,9 +15,9 @@ clc
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\5-18-21 MATLAB data\'
 % fileName ='trail2_250mV' ;
 %Works: trial 1,4 Does not work: 2
-
-filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\5-20 RECUT\'
-fileName ='Trial 7' ;
+% 
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\5-20 RECUT\'
+% fileName ='Trial 7' ;
 %Works: 
 
 % load([filePath,fileName]);

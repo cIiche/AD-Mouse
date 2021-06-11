@@ -4,22 +4,30 @@ clc
 % % %% load data
 
 % runs successfully 
-filePath = 'C:\Users\Administrator\MATLAB\Projects\ACTUALadgit\Data\Bobola\5-5-21 Mouse1 RECUT only channels with data\'
-fileName = 'Trial 3';
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-5-21 Mouse1 RECUT only channels with data\'
+% fileName = 'Trial 4';
+% works: Trials 1,2,3 does not work: 4 
 
-% %trial 1 works only due to code interpreting noise as stim data thus CWT protuces, stim data is incorrect,
-% % trial 2 does not error exceed array (0), a=a median stas
-% filePath = 'C:\Users\Administrator\MATLAB\Projects\ACTUALadgit\Data\Bobola\5-5-21 MATLAB data\'
-% fileName ='trial2_250mV' ;
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-5-21 MATLAB data\'
+% fileName ='trial3_250mV' ;
+%Works: trial 1,4 Does not work: 2
 
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\5-18-21 MATLAB data\'
+% fileName ='trail2_250mV' ;
+%Works: trial 1,4 Does not work: 2
+
+filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\5-20 RECUT\'
+fileName ='Trial 7' ;
+%Works: 
+
+% load([filePath,fileName]);
 load([filePath,fileName]);
-
 % % % load 03_med_V1_US_40Hz_100_35_AD.mat
 %% set parameters
 %set_channels=input('Enter channels for analysis [S1 A1 V1R V1L Stim Gel ]:');% Gel is 9th item, stim is 6 for us. others are 1-4
 % set_channels=[1 2 3 4 5]; % works for recut 
 set_channels=[1 2 3 4 5] ;
-% plot_cwt=input('Plot CWTs? Y=1 N=2 :');
+% plot_cwt=input('Plot CWTs? Y=1 N=2 : ');
 plot_cwt=1;
 S1=set_channels(1);A1=set_channels(2);V1R=set_channels(3);V1L=set_channels(4);stim=set_channels(5);% set channel identities
 % fs = input('What is the tickrate/sampling rate?:') ;
@@ -27,8 +35,11 @@ S1=set_channels(1);A1=set_channels(2);V1R=set_channels(3);V1L=set_channels(4);st
  %acquisition rate (Hz)
 %Bobola Protocol sampling rate = 10k
 %Eguchi Protocal sampling rate = 60k
-fs=10000 ;
-%fs = 60000 ;
+% fs=10000 ;
+fs = 20000 ;
+
+% timeax=1:dataend(1); %set time axis
+
 timeax=1:dataend(1); %set time axis
 time=timeax/fs/60;%frames to seconds to minutes (these are the time values for each data point)
 timesec=timeax./fs;
@@ -93,9 +104,11 @@ X=X/max(X);
 Y=X>0.5;
 %Y=X>0.04;used during debugging, works as well
 Z=diff(Y);
-%index_allstim=find(Z>0.5);index_allstim=index_allstim+1;
-index_allstim=find(Z>0.04);index_allstim=index_allstim+1;
-
+% index_allstim=find(Z>0.5);
+% index_allstim=index_allstim+1;
+index_allstim=find(Z>0.04);
+index_allstim=index_allstim+1;
+% abs(Z>
 
 %find first pulse of each train, if stimulation contains trains
 index_trains=diff(index_allstim)>20000;
@@ -107,8 +120,6 @@ index_stim=index_allstim(index_trains);
 for i=1:length(names) %initiate data array to hold STAs
 stas.(char(names(i)))=[];
 end
-
-
 
 tb=1; %time before stim to start STA
 ta=9; %time after stim to end STA
@@ -143,7 +154,7 @@ clear yticklabels
 if plot_cwt==1 
 
 %     for i=1%:length(names)    
-    for i=1:length(names)  
+    for i=1%:length(names)  
         figure
         caxis_track=[];
         %ylabels={'V1bipolar (Hz)';'S1A (Hz)';'S1V1(Hz)'; '40hzStim (Hz)'};

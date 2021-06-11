@@ -1,4 +1,4 @@
-%% Authors: Alissa Phutirat, Henry Tan 
+%% Authors: Alissa, Henry 
 
 % This script plots CWTs (IN PROGRESS) 
 % working off the working cwt command and old code to produce a script that creates scalograms from labchart channels per trial 
@@ -9,8 +9,8 @@ clc
 % % %% load data
 
 % runs successfully (BOBOLA) 
-filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-5-21 Mouse1 RECUT only channels with data\'
-fileName = 'Trial 1';
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-5-21 Mouse1 RECUT only channels with data\'
+% fileName = 'Trial 3';
 % works: Trials 1,2,3 does not work: 4 
 
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-5-21 MATLAB data\'
@@ -18,25 +18,22 @@ fileName = 'Trial 1';
 %Works: trial 1,4 Does not work: 2
 
 % runs successfully (EGUCHI)
-% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\5-18-21 MATLAB data\'
-% fileName ='trail2_250mV' ;
-%Works: trial 1,4 Does not work: 2
-
-% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\5-20 RECUT\'
-% fileName ='Trial 7' ;
+filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\5-18-21 RECUT\'
+fileName ='Trial 1' ;
 %Works: 
 
-% load([filePath,fileName]);
-load([filePath,fileName]);
-% % % load 03_med_V1_US_40Hz_100_35_AD.mat
-%% set parameters
-%set_channels=input('Enter channels for analysis [S1 A1 V1R V1L Stim Gel ]:');% Gel is 9th item, stim is 6 for us. others are 1-4
-% set_channels=[1 2 3 4 5]; % works for recut 
-set_channels=[1 2 3 4 5] ;
-% plot_cwt=input('Plot CWTs? Y=1 N=2 : ');
-plot_cwt=1;
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\5-20 RECUT\'
+% fileName ='Trial 3' ;
+%Works:1,2,3,4trash,5,6trash,7,8trash,9trash,10vtrash,11,12trash,13trash
 
-% set channel identities
+
+load([filePath,fileName]);
+
+%% set parameters
+
+set_channels=[1 2 3 4 5] ;
+
+% set channel identities, stim should always be on index 5, no matter what channel 
 decision = input('Do you want to manually input channels?(1 = yes, 0 = no):') ;
 if decision == 1
     RS = input('What channel is right somato?:') ;
@@ -46,22 +43,22 @@ if decision == 1
     RS=set_channels(RS);LS=set_channels(LS);RH=set_channels(RH);LH=set_channels(LH);stim=set_channels(5) ; 
 end 
 if decision == 0  
-    RS=set_channels(1);LS=set_channels(2);RH=set_channels(3);LH=set_channels(4);stim=set_channels(5) ; 
+    % 5/5
+    %RS=set_channels(4);LS=set_channels(1);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
+    % 5/20
+    %RS=set_channels(2);LS=set_channels(4);RH=set_channels(1);LH=set_channels(3);stim=set_channels(5) ; 
+    %5/18
+    RS=set_channels(1);LS=set_channels(3);RH=set_channels(2);LH=set_channels(4);stim=set_channels(5) ;
 end 
-% stim should always be on index 5, no matter what channel 
 
-% S1=set_channels(1);A1=set_channels(2);V1R=set_channels(3);V1L=set_channels(4);stim=set_channels(5);
+%% Set sampling rate
 % fs = input('What is the tickrate/sampling rate?:') ;
-% fs=tickrate; % tickrate is what fs in Hz is called in the data file (aka you could hard code this as fs=10000  
- %acquisition rate (Hz)
- 
 %Bobola Protocol sampling rate = 10k
+% fs=10000 ;
 %Eguchi Protocal sampling rate = 20k
-fs=10000 ;
-% fs = 20000 ;
+fs = 20000 ;
 
-% timeax=1:dataend(1); %set time axis
-
+%%
 timeax=1:dataend(1); %set time axis
 time=timeax/fs/60;%frames to seconds to minutes (these are the time values for each data point)
 timesec=timeax./fs;
@@ -80,12 +77,15 @@ alldata.stimdata=data(datastart(stim):dataend(stim));
 alldata.LHRSbipolardata=alldata.LHdata-alldata.RSdata;
 alldata.LHRHbipolardata=alldata.LHdata-alldata.RHdata;
 
+% names={'RSdata','LSdata','RHdata','LHdata', 'stimdata', 'LHRSbipolardata', 'LHRHbipolardata'};
 names={'RSdata','LSdata','RHdata','LHdata', 'stimdata', 'LHRSbipolardata', 'LHRHbipolardata'};
 %% plot raw data
 figure
 for i=1:length(names)
     subplot(length(names),1,i)
-    plot(time,alldata.(char(names(i)))) % this is plotting time in minutes, but if you want seconds, use timesec instead of time
+%     if i == 5, continue, end . This is in the works for 5/18 EGUCHI data
+%     because stim is 2x the time vector (should be same length)
+    plot(time,alldata.(char(namnes(i)))) % this is plotting time in minutes, but if you want seconds, use timesec instead of time
     title(names(i));
 end
 xlabel('time (minutes)')
@@ -103,10 +103,13 @@ xlabel('time (minutes)')
 %effects at the ends of each STA, vs end effects only at the beginning and
 %end of the time series data
 
-lowEnd = 1; % Hz
-highEnd = 50; % Hz
+% lowEnd = 1; % Hz
+% highEnd = 50; % Hz
+lowEnd = 2; % Hz
+highEnd = 100; % Hz
 filterOrder = 3; % Filter order (e.g., 2 for a second-order Butterworth filter). Try other values too
 [b, a] = butter(filterOrder, [lowEnd highEnd]/(fs/2)); % Generate filter coefficients
+% [b, a] = butter(filterOrder, [lowEnd highEnd]/(fs/4)); % Generate filter coefficients
 
 for ii=1:length(names)
 filteredData.(char(names(ii))) = filtfilt(b, a,alldata.(char(names(ii)))); % Apply filter to data using zero-phase filtering
@@ -166,10 +169,14 @@ subplot(4,1,4)
 xlabel('time after stimulus onset (s)')
 
 %% plot filtered CWTs of STAs
-ticks=[0:.005:.1];
+% ticks=[0:.005:.1];
+ticks=[0:0.01:.1];
 clear yticks
 clear yticklabels
-if plot_cwt==1 
+
+
+% filterbank initialization
+% fb = cwtfilterbank('WaveletParameters',[2,5]);
 
 %     for i=1%:length(names)    
     for i=1:length(names)  
@@ -180,14 +187,18 @@ if plot_cwt==1
         mediansig=median(stas.(char(names(i))));
         [minfreq,maxfreq] = cwtfreqbounds(length(mediansig),fs); %determine the bandpass bounds for the signal
         cwt(mediansig,[],fs);
+%         cwt(mediansig,fb,fs)
         %ylabel(ylabels(i))
+        ylabel('Frequency (Hz)')
         colormap(jet)
         title(names(i))
         ylim([.001, .1])
         yticks(ticks)
-        yticklabels({  0    5.0000   10.0000   15.0000   20.0000   25.0000   30.0000   35.0000   40.0000   45.0000   50.0000  55.0000  60})
-        set(gca,'FontSize',20)
-        caxis([.00008, .0002]);
+%         yticklabels({  0    5.0000   10.0000   15.0000   20.0000   25.0000   30.0000   35.0000   40.0000   45.0000   50.0000  55.0000  60})
+        yticklabels({  0 10.0000 20.0000 30.0000 40.0000 50.0000 60})
+        set(gca,'FontSize',15)
+%         caxis([.00008, .0002]);
+        caxis([.00008, .00015]);
         
 %         pngFileName = sprintf('plot_%d.fig', i);
 	%fullFileName = fullfile(folder, pngFileName);
@@ -198,4 +209,4 @@ if plot_cwt==1
 	
 
     end
-end
+

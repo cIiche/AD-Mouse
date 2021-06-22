@@ -3,8 +3,11 @@ close all
 clc
 % % %% load data
 
-filePath = 'C:\Users\aliss\Documents\MATLAB\AD project\AD data\5.5.21\'
-fileName = 'trial1_200mV.mat';
+filePath = 'C:\Users\aliss\Desktop\MATLAB\Projects\ADgit\AD data\5-5-21 Mouse1 RECUT only channels with data\'
+fileName = 'Trial 2'
+% 5/5/21 fileName = 'Trial 1';
+% Error in Triangle_leads_ALz_JCK (line 31)
+% alldata.stimdata=data(datastart(stim):dataend(stim));
 
 load([filePath,fileName]);
 

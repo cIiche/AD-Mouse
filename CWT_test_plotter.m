@@ -42,7 +42,7 @@ title('Scalogram by method2') ;
 
 % scalogram with COI and pseudocolor image 
 figure(4) 
-cwt(x, 'amor', seconds(1/fs)); %'morse'(default), 'amor', bump'
+cwt(x,'morse',seconds(1/fs)); %'morse'(default), 'amor', bump'
 colormap(parula) 
 title('Scalogram with COI by Method 1') ;
 
@@ -50,5 +50,3 @@ title('Scalogram with COI by Method 1') ;
 % scgimg = ind2rgb(im2uint8(rescale (flip(cfs))), jet(320)) ;
 % imwrite(imresize(scgimg,[512,512]), 'scalogram.jpg') 
 %   
-
-

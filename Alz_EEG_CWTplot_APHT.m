@@ -8,22 +8,22 @@ close all
 clc
 % % %% load data
 
-% BOBOLA
-% filePath = 'C:\Users\Henry\MATLAB\Projects\AD Mouse Github\AD data\Bobola\5-5-21 Mouse1 RECUT only channels with data\'
-% fileName = 'Trial 3';
+% runs successfully (BOBOLA) 
+filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-5-21 Mouse1 RECUT only channels with data\'
+fileName = 'Trial 3';
 % works: Trials 1,2,3 does not work: 4 
 
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-5-21 MATLAB data\'
-% fileName ='trial3_250mV' ;
+% fileName ='trial4_300mV' ;
 %Works: trial 1,4 Does not work: 2
 
-% EGUCHI
-filePath = 'C:\Users\Henry\MATLAB\Projects\AD Mouse Github\AD data\Eguchi\5-18-21 RECUT\'
-fileName ='Trial 1' ;
+% runs successfully (EGUCHI)
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\5-18-21 RECUT\'
+% fileName ='Trial 1' ;
 %Works: 
 
-% filePath = 'C:\Users\Henry\MATLAB\Projects\AD Mouse Github\AD data\Eguchi\5-20 RECUT\'
-% fileName ='Trial 3' ;
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\5-20 RECUT\'
+% fileName ='Trial 1' ;
 %Works:1,2,3,4trash,5,6trash,7,8trash,9trash,10vtrash,11,12trash,13trash
 
 
@@ -46,17 +46,17 @@ if decision == 0
     % 5/5
     RS=set_channels(4);LS=set_channels(1);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
     % 5/20
-    %RS=set_channels(2);LS=set_channels(4);RH=set_channels(1);LH=set_channels(3);stim=set_channels(5) ; 
-    %5/18
+%     RS=set_channels(2);LS=set_channels(4);RH=set_channels(1);LH=set_channels(3);stim=set_channels(5) ; 
+%     5/18
 %     RS=set_channels(1);LS=set_channels(3);RH=set_channels(2);LH=set_channels(4);stim=set_channels(5) ;
 end 
 
 %% Set sampling rate
 % fs = input('What is the tickrate/sampling rate?:') ;
 %Bobola Protocol sampling rate = 10k
-% fs=10000 ;
+fs=10000 ;
 %Eguchi Protocal sampling rate = 20k
-fs = 20000 ;
+% fs = 20000 ;
 
 %%
 timeax=1:dataend(1); %set time axis
@@ -72,8 +72,6 @@ alldata.RHdata=data(datastart(RH):dataend(RH));
 alldata.LHdata=data(datastart(LH):dataend(LH));
 alldata.stimdata=data(datastart(stim):dataend(stim));
 
-% make sample data here to verify frequency (be fancy try multiple
-% frequencies ) 
 
 % % make bipolar channels
 alldata.LHRSbipolardata=alldata.LHdata-alldata.RSdata;
@@ -85,18 +83,17 @@ names={'RSdata','LSdata','RHdata','LHdata', 'stimdata', 'LHRSbipolardata', 'LHRH
 figure
 for i=1:length(names)
     subplot(length(names),1,i)
-%     This is in the works for 5/18 EGUCHI data
-%     because stim is 2x the time vector (should be same length)
-    if i == 5
-        alldata.stimdata(3280001:6560000) = [] ;
-    end 
+    % only for 5/18 eguchi data lightstim data is too long
+%     if i == 5
+%         alldata.stimdata(3280001:6560000) = [] ;
+%     end 
     plot(time,alldata.(char(names(i)))) % this is plotting time in minutes, but if you want seconds, use timesec instead of time
     title(names(i));
 end
 xlabel('time (minutes)')
 
 % %%  Check frequency components of raw data 
-% signal=(alldata.V1bipolardata);
+% signal=(alldata.LHRSbipolardata);
 % fftV1=fft(signal);
 % figure
 % plot(linspace(0,fs,length(fftV1)),abs(fftV1));
@@ -108,12 +105,11 @@ xlabel('time (minutes)')
 %effects at the ends of each STA, vs end effects only at the beginning and
 %end of the time series data
 
-lowEnd = 1; % Hz
-highEnd = 50; % Hz
-% lowEnd = 2; % Hz
-% highEnd = 100; % Hz
-% filterOrder = 3; % Filter order (e.g., 2 for a second-order Butterworth filter). Try other values too
-filterOrder = 2; % Filter order (e.g., 2 for a second-order Butterworth filter). Try other values too
+% lowEnd = 1; % Hz
+% highEnd = 50; % Hz
+lowEnd = 2; % Hz
+highEnd = 100; % Hz
+filterOrder = 3; % Filter order (e.g., 2 for a second-order Butterworth filter). Try other values too
 [b, a] = butter(filterOrder, [lowEnd highEnd]/(fs/2)); % Generate filter coefficients
 % [b, a] = butter(filterOrder, [lowEnd highEnd]/(fs/4)); % Generate filter coefficients
 
@@ -184,28 +180,27 @@ clear yticklabels
 % filterbank initialization
 % fb = cwtfilterbank('WaveletParameters',[2,5]);
 
-%     for i=1%:length(names)    
-    for i=1:length(names)  
+    for i=1:length(names)    
+%     for i=1:length(names)  
         figure
         caxis_track=[];
         %ylabels={'V1bipolar (Hz)';'S1A (Hz)';'S1V1(Hz)'; '40hzStim (Hz)'};
         xlabel('time after stimulus onset (s)');
         mediansig=median(stas.(char(names(i))));
         [minfreq,maxfreq] = cwtfreqbounds(length(mediansig),fs); %determine the bandpass bounds for the signal
-%         cwt(mediansig,[],fs);
-        spectrogram(mediansig,[],fs);
+        cwt(mediansig,[],fs);
 %         cwt(mediansig,fb,fs)
-        %ylabel(ylabels(i))
         ylabel('Frequency (Hz)')
         colormap(jet)
         title(names(i))
         ylim([.001, .1])
         yticks(ticks)
-        yticklabels({  0    5.0000   10.0000   15.0000   20.0000   25.0000   30.0000   35.0000   40.0000   45.0000   50.0000  55.0000  60})
-%         yticklabels({  0 10.0000 20.0000 30.0000 40.0000 50.0000 60})
+%         yticklabels({  0    5.0000   10.0000   15.0000   20.0000   25.0000   30.0000   35.0000   40.0000   45.0000   50.0000  55.0000  60})
+        yticklabels({  0 10.0000 20.0000 30.0000 40.0000 50.0000 60})
         set(gca,'FontSize',15)
 %         caxis([.00008, .0002]);
         caxis([.00008, .00015]);
+        
         
 %         pngFileName = sprintf('plot_%d.fig', i);
 	%fullFileName = fullfile(folder, pngFileName);

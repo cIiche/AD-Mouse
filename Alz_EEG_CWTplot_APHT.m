@@ -1,29 +1,37 @@
 %% Authors: Alissa, Henry 
 
 % This script plots CWTs (IN PROGRESS) 
-% working off the working cwt command and old code to produce a script that creates scalograms from labchart channels per trial 
+% working off the working cwt command and old code to produce a script that creates scalograms from labchart channels per trial
+%When cutting data from Labchart, please cut channels 1-4, 9 or whatever
+%used, as well as upsample/double check the sampling rate so that the data
+%is the same length and run correctly by MATLAB
 
 clear all
 close all
 clc
 % % %% load data
 
-% runs successfully (BOBOLA) 
+%% runs successfully (BOBOLA) 
+
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\4-20-21 RECUT\' 
+% fileName = 'Trial 5';
+
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-5-21 Mouse1 RECUT only channels with data\'
-% fileName = 'Trial 3';
-% works: Trials 1,2,3 does not work: 4 
+% fileName = 'Trial 1';
 
-% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-5-21 MATLAB data\'
-% fileName ='trial3_250mV' ;
-%Works: trial 1,4 Does not work: 2
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-10-21 RECUT\'
+% fileName ='Trial 1' ;
 
-% runs successfully (EGUCHI)
-filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\5-18-21 RECUT\'
-fileName ='Trial 1' ;
-%Works: 
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-11-21 RECUT\'
+% fileName ='Trial 4' ;
 
-% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\5-20 RECUT\'
-% fileName ='Trial 3' ;
+%% runs successfully (EGUCHI)
+
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\05-18-21 RECUT 2.0 sampling rate all 20k\' ;
+% fileName ='Trial 6' ;
+
+filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\5-20 RECUT\'
+fileName ='Trial 13' ;
 %Works:1,2,3,4trash,5,6trash,7,8trash,9trash,10vtrash,11,12trash,13trash
 
 
@@ -43,20 +51,27 @@ if decision == 1
     RS=set_channels(RS);LS=set_channels(LS);RH=set_channels(RH);LH=set_channels(LH);stim=set_channels(5) ; 
 end 
 if decision == 0  
+    % 4/20 - channel 1 wasn't working ,set to RH to make code run 
+%     RS=set_channels(2);LS=set_channels(4);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5);
     % 5/5
-    %RS=set_channels(4);LS=set_channels(1);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
+%     RS=set_channels(4);LS=set_channels(1);RH=set_channels(1);LH=set_channels(3);stim=set_channels(5) ;
+    % 5/10
+%     RS=set_channels(1);LS=set_channels(1);RH=set_channels(3);LH=set_channels(4);stim=set_channels(5) ;
+    % 5/11
+% RS=set_channels(2);LS=set_channels(4);RH=set_channels(1);LH=set_channels(3);stim=set_channels(5) ;
     % 5/20
-    %RS=set_channels(2);LS=set_channels(4);RH=set_channels(1);LH=set_channels(3);stim=set_channels(5) ; 
-    %5/18
-    RS=set_channels(1);LS=set_channels(3);RH=set_channels(2);LH=set_channels(4);stim=set_channels(5) ;
+    RS=set_channels(2);LS=set_channels(4);RH=set_channels(1);LH=set_channels(3);stim=set_channels(5) ; 
+%     5/18
+%     RS=set_channels(1);LS=set_channels(3);RH=set_channels(2);LH=set_channels(4);stim=set_channels(5) ;
 end 
 
 %% Set sampling rate
 % fs = input('What is the tickrate/sampling rate?:') ;
-%Bobola Protocol sampling rate = 10k
+%Bobola Protocol sampling rate = 10k however bobola from voltage
+%experiments are all 20k
 % fs=10000 ;
 %Eguchi Protocal sampling rate = 20k
-fs = 20000 ;
+ fs = 20000 ;
 
 %%
 timeax=1:dataend(1); %set time axis
@@ -83,15 +98,17 @@ names={'RSdata','LSdata','RHdata','LHdata', 'stimdata', 'LHRSbipolardata', 'LHRH
 figure
 for i=1:length(names)
     subplot(length(names),1,i)
-%     if i == 5, continue, end . This is in the works for 5/18 EGUCHI data
-%     because stim is 2x the time vector (should be same length)
-    plot(time,alldata.(char(namnes(i)))) % this is plotting time in minutes, but if you want seconds, use timesec instead of time
+    % only for 5/18 eguchi data lightstim data is too long
+%     if i == 5
+%         alldata.stimdata(3280001:6560000) = [] ;
+%     end 
+    plot(time,alldata.(char(names(i)))) % this is plotting time in minutes, but if you want seconds, use timesec instead of time
     title(names(i));
 end
 xlabel('time (minutes)')
 
 % %%  Check frequency components of raw data 
-% signal=(alldata.V1bipolardata);
+% signal=(alldata.LHRSbipolardata);
 % fftV1=fft(signal);
 % figure
 % plot(linspace(0,fs,length(fftV1)),abs(fftV1));
@@ -178,8 +195,8 @@ clear yticklabels
 % filterbank initialization
 % fb = cwtfilterbank('WaveletParameters',[2,5]);
 
-%     for i=1%:length(names)    
-    for i=1:length(names)  
+    for i=1:length(names)    
+%     for i=1:length(names)  
         figure
         caxis_track=[];
         %ylabels={'V1bipolar (Hz)';'S1A (Hz)';'S1V1(Hz)'; '40hzStim (Hz)'};
@@ -188,7 +205,6 @@ clear yticklabels
         [minfreq,maxfreq] = cwtfreqbounds(length(mediansig),fs); %determine the bandpass bounds for the signal
         cwt(mediansig,[],fs);
 %         cwt(mediansig,fb,fs)
-        %ylabel(ylabels(i))
         ylabel('Frequency (Hz)')
         colormap(jet)
         title(names(i))
@@ -199,6 +215,7 @@ clear yticklabels
         set(gca,'FontSize',15)
 %         caxis([.00008, .0002]);
         caxis([.00008, .00015]);
+        
         
 %         pngFileName = sprintf('plot_%d.fig', i);
 	%fullFileName = fullfile(folder, pngFileName);

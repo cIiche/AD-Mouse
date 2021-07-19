@@ -1,4 +1,4 @@
-% This code is designed to loop the alzheimers analysis sewuence (that
+% This code is designed to loop the alzheimers analysis sequence (that
 % produces CWTs)
 
 

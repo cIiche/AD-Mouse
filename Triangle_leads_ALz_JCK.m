@@ -7,7 +7,7 @@ clc
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-5-21 Mouse1 RECUT only channels with data\'
 % fileName = 'Trial 4';
 % works: Trials 1,2,3 does not work: 4 
-
+% 
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-5-21 MATLAB data\'
 % fileName ='trial3_250mV' ;
 %Works: trial 1,4 Does not work: 2
@@ -35,8 +35,8 @@ S1=set_channels(1);A1=set_channels(2);V1R=set_channels(3);V1L=set_channels(4);st
  %acquisition rate (Hz)
 %Bobola Protocol sampling rate = 10k
 %Eguchi Protocal sampling rate = 60k
-% fs=10000 ;
-fs = 20000 ;
+fs=10000 ;
+% fs = 20000 ;
 
 % timeax=1:dataend(1); %set time axis
 

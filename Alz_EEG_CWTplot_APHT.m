@@ -12,15 +12,15 @@ clc
 % % %% load data
 
 %% runs successfully (BOBOLA) 
-
+ 
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\4-20-21 RECUT\' 
 % fileName = 'Trial 5';
 
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-5-21 Mouse1 RECUT only channels with data\'
-% fileName = 'Trial 1';
-
-% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-10-21 RECUT\'
-% fileName ='Trial 1' ;
+% fileName = 'Trial 2';
+% 
+filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-10-21 RECUT\'
+fileName ='Trial 1' ;
 
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-11-21 RECUT\'
 % fileName ='Trial 4' ;
@@ -29,9 +29,9 @@ clc
 
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\05-18-21 RECUT 2.0 sampling rate all 20k\' ;
 % fileName ='Trial 6' ;
-
-filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\5-20 RECUT\'
-fileName ='Trial 13' ;
+% 
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Eguchi\5-20 RECUT\'
+% fileName ='Trial 13' ;
 %Works:1,2,3,4trash,5,6trash,7,8trash,9trash,10vtrash,11,12trash,13trash
 
 
@@ -56,11 +56,11 @@ if decision == 0
     % 5/5
 %     RS=set_channels(4);LS=set_channels(1);RH=set_channels(1);LH=set_channels(3);stim=set_channels(5) ;
     % 5/10
-%     RS=set_channels(1);LS=set_channels(1);RH=set_channels(3);LH=set_channels(4);stim=set_channels(5) ;
+    RS=set_channels(1);LS=set_channels(1);RH=set_channels(3);LH=set_channels(4);stim=set_channels(5) ;
     % 5/11
 % RS=set_channels(2);LS=set_channels(4);RH=set_channels(1);LH=set_channels(3);stim=set_channels(5) ;
     % 5/20
-    RS=set_channels(2);LS=set_channels(4);RH=set_channels(1);LH=set_channels(3);stim=set_channels(5) ; 
+%     RS=set_channels(2);LS=set_channels(4);RH=set_channels(1);LH=set_channels(3);stim=set_channels(5) ; 
 %     5/18
 %     RS=set_channels(1);LS=set_channels(3);RH=set_channels(2);LH=set_channels(4);stim=set_channels(5) ;
 end 
@@ -71,7 +71,7 @@ end
 %experiments are all 20k
 % fs=10000 ;
 %Eguchi Protocal sampling rate = 20k
- fs = 20000 ;
+  fs = 20000 ;
 
 %%
 timeax=1:dataend(1); %set time axis

@@ -40,19 +40,39 @@ clc
 % BOBOLA
 
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Bobola Chronic Study Day 3\Bobola m1 6_5_20\'
-% fileName = 'Trial 1'
-%
-% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Bobola Chronic Study Day 3\Bobola m2 6_6_20\'
-% fileName = 'Trial 2'
+% fileName = 'Trial 7'
+%   T1:  caxis([.00008, .0013]);, T2:  caxis([.00008, .0015]); T3,T4,T5,T6:
+%   caxis([.00008, .002]); 
 
-filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Bobola Chronic Study Day 3\Bobola m3 6_6_20\'
-fileName = 'Trial 1'
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Bobola Chronic Study Day 3\Bobola m2 6_6_20\'
+% fileName = 'Trial 6'
+    % T1: caxis([.00008, .00025]); T2,T3,T4,T5,T6 caxis([.00008, .0002]);
+  
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Bobola Chronic Study Day 3\Bobola m3 6_6_20\'
+% fileName = 'Trial 6'
+%   T1-all : caxis([.00008, .0012]); 
 
 % EGUCHI
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Eguchi Chronic Study Day 3\Mouse 2 (was m4) 5-21-20\'
+% fileName = 'Trial 6'
+%   T1:  caxis([.00008, .00025]); T2:  caxis([.00008, .0003]); T3-6: caxis([.00008, .00035]);
 
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Eguchi Chronic Study Day 3\Mouse 3 5-21-20\'
+% fileName = 'Trial 6'
+%   T1-6:  caxis([.00008, .0004]);
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Eguchi Chronic Study Day 3\Eguchi actual m4 6_12_20\'
-% fileName = 'Trial 1'
+% fileName = 'Trial 6'
+%   T1-all:  caxis([.00008, .00025]); 
 
+%CHIKODI
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Chikodi Chronic Study day 3\chikodi m2 5_28_20\'
+% fileName = 'Trial 6'
+%   T1  caxis([.00008, .0012]); T2: caxis([.00008, .0015]); T3:
+%   caxis([.00008, .002]); T4-6   caxis([.00008, .008]);
+
+filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Chikodi Chronic Study day 3\chikodi m3 5_28_20\'
+fileName = 'Trial 6'
+%   T1-6:  caxis([.00008, .0004]);
 load([filePath,fileName]);
 
 %% set parameters
@@ -86,19 +106,15 @@ if decision == 0
     % 6/6/20 m3 
 %    RS=set_channels(1);LS=set_channels(4);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
 %% EGUCHI 
-    % 6/5/20 m1
-%    RS=set_channels(1);LS=set_channels(4);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
-    % 6/6/20 m2
-%    RS=set_channels(2);LS=set_channels(4);RH=set_channels(1);LH=set_channels(3);stim=set_channels(5) ; 
-    % 6/6/20 m3 
-%    RS=set_channels(1);LS=set_channels(4);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
+    % 5/21/20 m2, m3
+%     RS=set_channels(2);LS=set_channels(3);RH=set_channels(1);LH=set_channels(4);stim=set_channels(5) ;
+%    6/12/20 egu m4
+%     RS=set_channels(4);LS=set_channels(1);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
 %% CHIKODI 
-    % 6/5/20 m1
-%    RS=set_channels(1);LS=set_channels(4);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
-    % 6/6/20 m2
-%    RS=set_channels(2);LS=set_channels(4);RH=set_channels(1);LH=set_channels(3);stim=set_channels(5) ; 
-    % 6/6/20 m3 
-%    RS=set_channels(1);LS=set_channels(4);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
+    % 5/28/20 m2,m3
+   RS=set_channels(4);LS=set_channels(1);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
+   
+    
 end 
 
 %% Set sampling rate
@@ -249,11 +265,15 @@ clear yticklabels
 %         yticklabels({  0    5.0000   10.0000   15.0000   20.0000   25.0000   30.0000   35.0000   40.0000   45.0000   50.0000  55.0000  60})
         yticklabels({  0 10.0000 20.0000 30.0000 40.0000 50.0000 60})
         set(gca,'FontSize',15)
-%         caxis([.00008, .0002]);
+%         caxis([.00008, .0001]);
 %         caxis([.00008, .00015]);
+        caxis([.00008, .00040]);
+%         caxis([.00008, .00025]);
+%         caxis([.00008, .0010]);
+%         caxis([.00008, .0012]);
 %         caxis([.00008, .0015]);
-%         caxis([.00008, .0014]);
- caxis([.00008, .0013]);
+%         caxis([.00008, .002]);
+%         caxis([.00008, .008]);
         
 %         pngFileName = sprintf('plot_%d.fig', i);
 	%fullFileName = fullfile(folder, pngFileName);

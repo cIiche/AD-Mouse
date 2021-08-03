@@ -12,11 +12,11 @@ clc
 filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Data\Bobola\5-10-21 RECUT\'
 % fileName = 'Trial 1'
 
-% fileName = 'In between T1 and T2'
+fileName = 'In between T1 and T2'
 
 % fileName = 'In between T3 and T4' ;
 
-fileName = 'In between T8 and end' ;
+% fileName = 'In between T8 and end' ;
 
 
 %% (EGUCHI)
@@ -265,8 +265,8 @@ clear yticklabels
         yticklabels({  0 10.0000 20.0000 30.0000 40.0000 50.0000 60})
         set(gca,'FontSize',15)
 %         caxis([.00008, .0002]);
-%         caxis([.00008, .00015]);
-        caxis([0.00008 0.001])
+        caxis([.00008, .00015]);
+%         caxis([0.00008 0.001])
         
         
 %         pngFileName = sprintf('plot_%d.fig', i);

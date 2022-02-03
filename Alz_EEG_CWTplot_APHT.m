@@ -1,4 +1,4 @@
-%% Authors: Alissa, Henry 
+%% Authors: Alissa, Henry (goats) 
 
 % This script plots CWTs (IN PROGRESS) 
 % working off the working cwt command and old code to produce a script that creates scalograms from labchart channels per trial
@@ -40,12 +40,12 @@ clc
 % BOBOLA
 
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Bobola Chronic Study Day 3\Bobola m1 6_5_20\'
-% fileName = 'Trial 7'
+% fileName = 'Trial 6'
 %   T1:  caxis([.00008, .0013]);, T2:  caxis([.00008, .0015]); T3,T4,T5,T6:
 %   caxis([.00008, .002]); 
-
+% 
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Bobola Chronic Study Day 3\Bobola m2 6_6_20\'
-% fileName = 'Trial 6'
+% fileName = 'Trial 2'
     % T1: caxis([.00008, .00025]); T2,T3,T4,T5,T6 caxis([.00008, .0002]);
   
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Bobola Chronic Study Day 3\Bobola m3 6_6_20\'
@@ -54,27 +54,35 @@ clc
 
 % EGUCHI
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Eguchi Chronic Study Day 3\Mouse 2 (was m4) 5-21-20\'
-% fileName = 'Trial 6'
+% fileName = 'Trial 3'
 %   T1:  caxis([.00008, .00025]); T2:  caxis([.00008, .0003]); T3-6: caxis([.00008, .00035]);
 
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Eguchi Chronic Study Day 3\Mouse 3 5-21-20\'
-% fileName = 'Trial 6'
+% fileName = 'Trial 1'
 %   T1-6:  caxis([.00008, .0004]);
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Eguchi Chronic Study Day 3\Eguchi actual m4 6_12_20\'
-% fileName = 'Trial 6'
+% fileName = 'Trial 2'
 %   T1-all:  caxis([.00008, .00025]); 
 
 %CHIKODI
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Chikodi Chronic Study day 3\chikodi m2 5_28_20\'
-% fileName = 'Trial 6'
+% fileName = 'Trial 5'
 %   T1  caxis([.00008, .0012]); T2: caxis([.00008, .0015]); T3:
 %   caxis([.00008, .002]); T4-6   caxis([.00008, .008]);
 
-filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Chikodi Chronic Study day 3\chikodi m3 5_28_20\'
-fileName = 'Trial 6'
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Chikodi Chronic Study day 3\chikodi m3 5_28_20\';
+% fileName = 'Trial 6';
 %   T1-6:  caxis([.00008, .0004]);
-load([filePath,fileName]);
+%% Verasonics Voltage Studies 
+filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Bobola\10_29_21\';
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Bobola\11_02_21\';
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Bobola\11_03_21\';
+fileName = 'Trial 6';
+%% Verasonics Chronic Studies 
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Chronic Data\Chikodi m1\'; 
+% fileName = 'Trial 8'; 
 
+load([filePath,fileName]);
 %% set parameters
 
 set_channels=[1 2 3 4 5] ;
@@ -112,17 +120,26 @@ if decision == 0
 %     RS=set_channels(4);LS=set_channels(1);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
 %% CHIKODI 
     % 5/28/20 m2,m3
-   RS=set_channels(4);LS=set_channels(1);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
-   
-    
+%    RS=set_channels(4);LS=set_channels(1);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
+%% Verasonics Voltage Studies 
+% bobola 
+% 11/3/21 
+%     RS=set_channels(1);LS=set_channels(4);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
+% 11/2/21
+%     RS=set_channels(4);LS=set_channels(3);RH=set_channels(2);LH=set_channels(1);stim=set_channels(5) ;
+% 10/29/21 
+    RS=set_channels(4);LS=set_channels(1);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
+%% Verasonics Chronic Studies
+% Chikodi m1
+%     RS=set_channels(1);LS=set_channels(3);RH=set_channels(2);LH=set_channels(4);stim=set_channels(5) ;
 end 
 
 %% Set sampling rate
 % fs = input('What is the tickrate/sampling rate?:') ;
 %Bobola Protocol sampling rate = 10k
-% fs=10000 ;
+fs=10000 ;
 %Eguchi Protocal sampling rate = 20k
- fs = 20000 ;
+%  fs = 20000 ;
 
 %%
 timeax=1:dataend(1); %set time axis
@@ -175,7 +192,7 @@ xlabel('time (minutes)')
 % lowEnd = 1; % Hz
 % highEnd = 50; % Hz
 lowEnd = 2; % Hz
-highEnd = 60; % Hz
+highEnd = 100; % Hz
 filterOrder = 3; % Filter order (e.g., 2 for a second-order Butterworth filter). Try other values too
 [b, a] = butter(filterOrder, [lowEnd highEnd]/(fs/2)); % Generate filter coefficients
 % [b, a] = butter(filterOrder, [lowEnd highEnd]/(fs/4)); % Generate filter coefficients
@@ -238,8 +255,12 @@ subplot(4,1,4)
 xlabel('time after stimulus onset (s)')
 
 %% plot filtered CWTs of STAs
+% maybe works for axis 5,10,15...
 % ticks=[0:.005:.1];
-ticks=[0:0.01:.1];
+% maybe works for 1,2,3.... Hz 
+ticks=[0:.001:.1];
+% works for axis 10, 20, 40-80
+% ticks=[0:0.01:.1];
 clear yticks
 clear yticklabels
 
@@ -262,19 +283,28 @@ clear yticklabels
         title(names(i))
         ylim([.001, .1])
         yticks(ticks)
+        % works with ticks=[0:.005:.1];
 %         yticklabels({  0    5.0000   10.0000   15.0000   20.0000   25.0000   30.0000   35.0000   40.0000   45.0000   50.0000  55.0000  60})
-        yticklabels({  0 10.0000 20.0000 30.0000 40.0000 50.0000 60})
-        set(gca,'FontSize',15)
-%         caxis([.00008, .0001]);
-%         caxis([.00008, .00015]);
-        caxis([.00008, .00040]);
-%         caxis([.00008, .00025]);
-%         caxis([.00008, .0010]);
-%         caxis([.00008, .0012]);
-%         caxis([.00008, .0015]);
-%         caxis([.00008, .002]);
-%         caxis([.00008, .008]);
+        % works with [0:.01:.1];
+%         yticklabels({  0 10.0000 20.0000 30.0000 40.0000 50.0000 60})
+%         yticklabels({  0 10.0000 20.0000 30.0000 40.0000 50.0000 60.0000 70.0000 80})
+        % works with [0:.0005:.1]
+%         axisnumbers = [0:1.0000:60.0000];
+%         axisstring = string(axisnumbers) ; 
+        yticklabels({  0 1.0000 2.0000 3.0000 4.0000 5.0000 6.0000 7.0000 8.0000 9.0000 10.0000 ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' 20.0000 ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' 30 ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' 40 ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' 50})
+%         yticklabels(axisstring) 
         
+%         set(gca,'XTick',[0,1,2,3,4,5,6,7,8,9,10], 'YTick', [0,1,2,3,4,5,6,7,8,9,10, 20, 30, 40, 50, 60, 70, 80])
+
+%         set(gca,'ytick', [0,1,2,3,4,5,6,7,8,9,10,20,30,40,50,60], 'yticklabel', {'0','1','2','3','4','5','6','7','8','9','10','20','30','40','50','60'})
+%         set(gca,'FontSize',15)
+
+%         caxis([.00008, .00040]);
+% caxis([.00008, .00035])
+% caxis([.0000, .0001]); 
+caxis([.0000, .0005]); 
+
+
 %         pngFileName = sprintf('plot_%d.fig', i);
 	%fullFileName = fullfile(folder, pngFileName);
 		

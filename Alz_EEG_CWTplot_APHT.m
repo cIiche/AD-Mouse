@@ -74,10 +74,10 @@ clc
 % fileName = 'Trial 6';
 %   T1-6:  caxis([.00008, .0004]);
 %% Verasonics Voltage Studies 
-filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Bobola\10_29_21\';
-% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Bobola\11_02_21\';
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Bobola\10_29_21\';
+filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Bobola\11_02_21\';
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Bobola\11_03_21\';
-fileName = 'Trial 6';
+fileName = 'Trial 9';
 %% Verasonics Chronic Studies 
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Chronic Data\Chikodi m1\'; 
 % fileName = 'Trial 8'; 
@@ -124,11 +124,11 @@ if decision == 0
 %% Verasonics Voltage Studies 
 % bobola 
 % 11/3/21 
-%     RS=set_channels(1);LS=set_channels(4);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
+   % RS=set_channels(1);LS=set_channels(4);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
 % 11/2/21
-%     RS=set_channels(4);LS=set_channels(3);RH=set_channels(2);LH=set_channels(1);stim=set_channels(5) ;
+     RS=set_channels(4);LS=set_channels(3);RH=set_channels(2);LH=set_channels(1);stim=set_channels(5) ;
 % 10/29/21 
-    RS=set_channels(4);LS=set_channels(1);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
+%   RS=set_channels(4);LS=set_channels(1);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
 %% Verasonics Chronic Studies
 % Chikodi m1
 %     RS=set_channels(1);LS=set_channels(3);RH=set_channels(2);LH=set_channels(4);stim=set_channels(5) ;
@@ -185,7 +185,7 @@ xlabel('time (minutes)')
 % ylim([0 6]);
 %% Filter the raw data with a lowpass butterworth filter 
 %Note: it's better to filter the raw data before STAs because this limits
-%the end effects that are inevitably created by the filter (you'd get end
+% %the end effects that are inevitably created by the filter (you'd get end
 %effects at the ends of each STA, vs end effects only at the beginning and
 %end of the time series data
 
@@ -281,7 +281,8 @@ clear yticklabels
         ylabel('Frequency (Hz)')
         colormap(jet)
         title(names(i))
-        ylim([.001, .1])
+%         ylim([.001, .1])
+        ylim([.001, .06])
         yticks(ticks)
         % works with ticks=[0:.005:.1];
 %         yticklabels({  0    5.0000   10.0000   15.0000   20.0000   25.0000   30.0000   35.0000   40.0000   45.0000   50.0000  55.0000  60})
@@ -302,7 +303,7 @@ clear yticklabels
 %         caxis([.00008, .00040]);
 % caxis([.00008, .00035])
 % caxis([.0000, .0001]); 
-caxis([.0000, .0005]); 
+caxis([.0000, .0006]); 
 
 
 %         pngFileName = sprintf('plot_%d.fig', i);

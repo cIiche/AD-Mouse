@@ -74,10 +74,10 @@ clc
 % fileName = 'Trial 6';
 %   T1-6:  caxis([.00008, .0004]);
 %% Verasonics Voltage Studies 
-% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Bobola\10_29_21\';
-filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Bobola\11_02_21\';
-% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Bobola\11_03_21\';
-fileName = 'Trial 9';
+filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Bobola\10_29_21\Pento study data\';
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Bobola\11_02_21\Pento Study Data\';
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Bobola\11_03_21\Pento Study Data\';
+fileName = 'Pento Trial 1';
 %% Verasonics Chronic Studies 
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Chronic Data\Chikodi m1\'; 
 % fileName = 'Trial 8'; 
@@ -97,7 +97,9 @@ if decision == 1
     RS=set_channels(RS);LS=set_channels(LS);RH=set_channels(RH);LH=set_channels(LH);stim=set_channels(5) ; 
 end 
 if decision == 0  
-    
+
+button = input("Running data with ultrasound on?('1'= yes, '0'=no): ") ;
+
 %% voltage data 
     % 5/5
 %    RS=set_channels(4);LS=set_channels(1);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
@@ -124,11 +126,11 @@ if decision == 0
 %% Verasonics Voltage Studies 
 % bobola 
 % 11/3/21 
-   % RS=set_channels(1);LS=set_channels(4);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
+%    RS=set_channels(1);LS=set_channels(4);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
 % 11/2/21
-     RS=set_channels(4);LS=set_channels(3);RH=set_channels(2);LH=set_channels(1);stim=set_channels(5) ;
+%      RS=set_channels(4);LS=set_channels(3);RH=set_channels(2);LH=set_channels(1);stim=set_channels(5) ;
 % 10/29/21 
-%   RS=set_channels(4);LS=set_channels(1);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
+  RS=set_channels(4);LS=set_channels(1);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
 %% Verasonics Chronic Studies
 % Chikodi m1
 %     RS=set_channels(1);LS=set_channels(3);RH=set_channels(2);LH=set_channels(4);stim=set_channels(5) ;
@@ -202,27 +204,32 @@ filteredData.(char(names(ii))) = filtfilt(b, a,alldata.(char(names(ii)))); % App
 end
 
 %% detect stimuli
-index_stim=[];%initialize reference array of stimulus onsets for STAs
-index_allstim=[];%secondary array of stimuli for identifying first pulse of a train. 
+if button == 1 
+    index_stim=[];%initialize reference array of stimulus onsets for STAs
+    index_allstim=[];%secondary array of stimuli for identifying first pulse of a train. 
 
-X=alldata.stimdata;
-X=X-min(X);
-X=X/max(X);
-Y=X>0.5;
-%Y=X>0.04;used during debugging, works as well
-Z=diff(Y);
-% index_allstim=find(Z>0.5);
-% index_allstim=index_allstim+1;
-index_allstim=find(Z>0.04);
-index_allstim=index_allstim+1;
-% abs(Z>
+    X=alldata.stimdata;
+    X=X-min(X);
+    X=X/max(X);
+    Y=X>0.5;
+    %Y=X>0.04;used during debugging, works as well
+    Z=diff(Y);
+    % index_allstim=find(Z>0.5);
+    % index_allstim=index_allstim+1;
+    index_allstim=find(Z>0.04);
+    index_allstim=index_allstim+1;
+    % abs(Z>
 
-%find first pulse of each train, if stimulation contains trains
-index_trains=diff(index_allstim)>20000;
-index_allstim(1)=[];
-index_stim=index_allstim(index_trains);
+    %find first pulse of each train, if stimulation contains trains
+    index_trains=diff(index_allstim)>20000;
+    index_allstim(1)=[];
+    index_stim=index_allstim(index_trains);
+elseif button == 0
+    % 10/29/21 
+%     index_stim = [129405,229405,329405,429405,529405,629405,729405,829405,929405,1029405,1129405,1229405,1329405,1429405,1529405,1629405,1729405,1829405,1929405,2029405,2129405,2229405,2329405,2429405,2529405,2629405,2729405,2829405,2929405,3029405,3129405,3229405,3329405,3429405,3529405,3629405,3729405,3829405,3929405,4029405,4129405,4229405,4329405,4429405,4529405,4629405];
+    index_stim = [129405,229405,329405,429405,529405,629405,729405,829405,929405,1029405,1129405];
 
-
+end
 %% Create STAs
 for i=1:length(names) %initiate data array to hold STAs
 stas.(char(names(i)))=[];
@@ -303,7 +310,8 @@ clear yticklabels
 %         caxis([.00008, .00040]);
 % caxis([.00008, .00035])
 % caxis([.0000, .0001]); 
-caxis([.0000, .0006]); 
+% caxis([.0000, .0006]); 
+caxis([.0000, .0004])
 
 
 %         pngFileName = sprintf('plot_%d.fig', i);
@@ -315,3 +323,14 @@ caxis([.0000, .0006]);
 	
 
     end
+
+    % this is for creating RMS values for this given filename (IN PROGRESS)
+    
+% all_points(1).name=names(1);
+% d=stas.(char(names(1)));
+% 
+%    for k=1:10
+%        concat=['RMSvals_' num2str(k)];
+% %        all_points(1).(concat)=rms(alldata.(char(names))(:,fs*(tb+k-1):fs*(tb+k))');
+%        all_points(1).(concat)=rms(d(:,fs*(tb+k-1):fs*(tb+k))');
+%    end 

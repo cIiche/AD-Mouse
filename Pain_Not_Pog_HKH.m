@@ -8,7 +8,7 @@ close all
 clc
 % % %% load data
 
-filePath = 'C:\Users\Henry\MATLAB\Mourad Lab\Pain_Study\Data\8_11_21 rat\';
+filePath = 'C:\Users\Administrator\MATLAB\Projects\Pain_study\Data\08_11_21_Rat\';
 fileName ='Trial 1' ;  
 
 load([filePath,fileName]);
@@ -191,7 +191,11 @@ clear yticklabels
         title(names(i))
         ylim([.001, .1])
         yticks(ticks)
-        yticklabels({  0 10.0000 20.0000 30.0000 40.0000 50.0000 60})
+%         yticklabels({  0 10.0000 20.0000 30.0000 40.0000 50.0000 60})
+
+yticks(1:10:60);
+yticks([1,4,10,40]);
+        
         set(gca,'FontSize',15)
         caxis([.00008, .0015]);
 % %         caxis([.00008, .00014]);

@@ -74,13 +74,16 @@ clc
 % fileName = 'Trial 6';
 %   T1-6:  caxis([.00008, .0004]);
 %% Verasonics Voltage Studies 
-filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Bobola\10_29_21\Pento study data\';
+% filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Bobola\10_29_21\Pento study data\';
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Bobola\11_02_21\Pento Study Data\';
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Bobola\11_03_21\Pento Study Data\';
-fileName = 'Pento Trial 1';
+% fileName = 'Pento Trial 1';
 %% Verasonics Chronic Studies 
 % filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Verasonics Voltage Trials\Chronic Data\Chikodi m1\'; 
 % fileName = 'Trial 8'; 
+
+filePath = 'C:\Users\Administrator\MATLAB\Projects\AD Mouse Git\Chronic Data\Eguchi Chronic Study Day 3\1_12_22 eguchi 11.9V M1 chronic day 3\';
+fileName = 'Trial 1';
 
 load([filePath,fileName]);
 %% set parameters
@@ -130,11 +133,17 @@ button = input("Running data with ultrasound on?('1'= yes, '0'=no): ") ;
 % 11/2/21
 %      RS=set_channels(4);LS=set_channels(3);RH=set_channels(2);LH=set_channels(1);stim=set_channels(5) ;
 % 10/29/21 
-  RS=set_channels(4);LS=set_channels(1);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
+%   RS=set_channels(4);LS=set_channels(1);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
 %% Verasonics Chronic Studies
 % Chikodi m1
 %     RS=set_channels(1);LS=set_channels(3);RH=set_channels(2);LH=set_channels(4);stim=set_channels(5) ;
+%eguchi 11.9V 
+% 1/12/22 m1 
+    RS=set_channels(4);LS=set_channels(1);RH=set_channels(2);LH=set_channels(3);stim=set_channels(5) ;
+% m2 
+% 1/35/22 
 end 
+somato_or_motor = input("Are eCoG's implanted in somatosenories or motor cortices? ('1'=somato, '2'= motor cortices): "); 
 
 %% Set sampling rate
 % fs = input('What is the tickrate/sampling rate?:') ;
@@ -150,21 +159,34 @@ timesec=timeax./fs;
 tottime=length(timeax)./fs./60; % total experiment block length in minutes 
 
 %% Organize data into structure array
+
 alldata=[]; %initialize structure array (alldata is a struct)
-
-alldata.RSdata=data(datastart(RS):dataend(RS)); % Call different fields as StructName.fieldName-> Struct is alldata and field is S1dataR
-alldata.LSdata=data(datastart(LS):dataend(LS));
-alldata.RHdata=data(datastart(RH):dataend(RH));
-alldata.LHdata=data(datastart(LH):dataend(LH));
-alldata.stimdata=data(datastart(stim):dataend(stim));
-
-
-% % make bipolar channels
-alldata.LHRSbipolardata=alldata.LHdata-alldata.RSdata;
-alldata.LHRHbipolardata=alldata.LHdata-alldata.RHdata;
+% Call different fields as StructName.fieldName-> Struct is alldata and field is S1dataR
+if somato_or_motor == 1 
+    
+    alldata.RSdata=data(datastart(RS):dataend(RS)); 
+    alldata.LSdata=data(datastart(LS):dataend(LS));
+    alldata.RHdata=data(datastart(RH):dataend(RH));
+    alldata.LHdata=data(datastart(LH):dataend(LH));
+    alldata.stimdata=data(datastart(stim):dataend(stim));
+    % % make bipolar channels
+    alldata.LHRSbipolardata=alldata.LHdata-alldata.RSdata;
+    alldata.LHRHbipolardata=alldata.LHdata-alldata.RHdata;
+    names={'RSdata','LSdata','RHdata','LHdata', 'stimdata', 'LHRSbipolardata', 'LHRHbipolardata'};
+elseif somato_or_motor == 2 
+    alldata.RMdata=data(datastart(RS):dataend(RS)); 
+    alldata.LMdata=data(datastart(LS):dataend(LS));
+    alldata.RHdata=data(datastart(RH):dataend(RH));
+    alldata.LHdata=data(datastart(LH):dataend(LH));
+    % % make bipolar channels
+    alldata.LHRMbipolardata=alldata.LHdata-alldata.RMdata;
+    alldata.LHRHbipolardata=alldata.LHdata-alldata.RHdata;
+    alldata.stimdata=data(datastart(stim):dataend(stim));
+    names={'RMdata','LMdata','RHdata','LHdata', 'stimdata', 'LHRMbipolardata', 'LHRHbipolardata'};
+end 
 
 % names={'RSdata','LSdata','RHdata','LHdata', 'stimdata', 'LHRSbipolardata', 'LHRHbipolardata'};
-names={'RSdata','LSdata','RHdata','LHdata', 'stimdata', 'LHRSbipolardata', 'LHRHbipolardata'};
+
 %% plot raw data
 figure
 for i=1:length(names)
@@ -227,7 +249,18 @@ if button == 1
 elseif button == 0
     % 10/29/21 
 %     index_stim = [129405,229405,329405,429405,529405,629405,729405,829405,929405,1029405,1129405,1229405,1329405,1429405,1529405,1629405,1729405,1829405,1929405,2029405,2129405,2229405,2329405,2429405,2529405,2629405,2729405,2829405,2929405,3029405,3129405,3229405,3329405,3429405,3529405,3629405,3729405,3829405,3929405,4029405,4129405,4229405,4329405,4429405,4529405,4629405];
-    index_stim = [129405,229405,329405,429405,529405,629405,729405,829405,929405,1029405,1129405];
+%     index_stim = [129405,229405,329405,429405,529405,629405,729405,829405,929405,1029405,1129405];
+
+index_stim = [];%initialize reference array of stimulus onsets for STAs
+index_allstim = [];%secondary array of stimuli for identifying first pulse of a train. 
+train_length = int(length(alldata.(char(names(1))))/(3423.2));
+    train_length = length(alldata.(char(names(1))))/(2000);
+artificial_train = zeros(1,train_length);
+for k = 1:length(alldata.(char(names(1)))/100)
+    artificial_train(60*k)=1;
+end
+index_allstim(1)=[];
+index_stim=index_allstim(artificial_train);
 
 end
 %% Create STAs
@@ -311,7 +344,7 @@ clear yticklabels
 % caxis([.00008, .00035])
 % caxis([.0000, .0001]); 
 % caxis([.0000, .0006]); 
-caxis([.0000, .0004])
+caxis([.0000, .0005])
 
 
 %         pngFileName = sprintf('plot_%d.fig', i);
